@@ -1,4 +1,4 @@
-# Postgresql 9.5 (http://www.postgresql.org/)
+# Postgresql 9.4 (http://www.postgresql.org/)
 # Based on https://github.com/Painted-Fox/docker-postgresql/
 
 FROM phusion/baseimage:0.9.18
@@ -16,7 +16,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --force-yes \
-        postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 postgresql-9.5-postgis-2.3 postgresql-9.5-postgis-scripts && \
+        postgresql-9.4 postgresql-client-9.4 postgresql-contrib-9.4 postgresql-9.4-postgis-2.4 postgresql-9.4-postgis-2.4-scripts && \
     /etc/init.d/postgresql stop
 
 # Install other tools.
@@ -33,10 +33,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
 
 # Cofigure the database to use our data dir.
-RUN sed -i -e"s/data_directory =.*$/data_directory = '\/data'/" /etc/postgresql/9.5/main/postgresql.conf
+RUN sed -i -e"s/data_directory =.*$/data_directory = '\/data'/" /etc/postgresql/9.4/main/postgresql.conf
 # Allow connections from anywhere.
-RUN sed -i -e"s/^#listen_addresses =.*$/listen_addresses = '*'/" /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "host    all    all    0.0.0.0/0    md5" >> /etc/postgresql/9.5/main/pg_hba.conf
+RUN sed -i -e"s/^#listen_addresses =.*$/listen_addresses = '*'/" /etc/postgresql/9.4/main/postgresql.conf
+RUN echo "host    all    all    0.0.0.0/0    md5" >> /etc/postgresql/9.4/main/pg_hba.conf
 
 EXPOSE 5432
 ADD . /scripts
@@ -47,9 +47,9 @@ RUN touch /firstrun
 RUN mkdir /etc/service/postgresql
 RUN ln -s /scripts/start.sh /etc/service/postgresql/run
 
-# Correct the Error: could not open temporary statistics file "/var/run/postgresql/9.5-main.pg_stat_tmp/global.tmp": No such file or directory
-RUN mkdir -p /var/run/postgresql/9.5-main.pg_stat_tmp
-RUN chown postgres:postgres /var/run/postgresql/9.5-main.pg_stat_tmp -R
+# Correct the Error: could not open temporary statistics file "/var/run/postgresql/9.4-main.pg_stat_tmp/global.tmp": No such file or directory
+RUN mkdir -p /var/run/postgresql/9.4-main.pg_stat_tmp
+RUN chown postgres:postgres /var/run/postgresql/9.4-main.pg_stat_tmp -R
 
 # Expose our data, log, and configuration directories.
 VOLUME ["/data", "/var/log/postgresql", "/etc/postgresql"]
